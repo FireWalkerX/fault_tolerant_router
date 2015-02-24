@@ -8,6 +8,7 @@ Fault Tolerant Router is well tested and already used in production by several y
 - [ ] improve documentation
 - [ ] split monitor and iptables generation in external required files
 - [ ] gem package
+- [ ] option to send a test email
 
 ## License
 GNU General Public License v2.0, see LICENSE file
