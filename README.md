@@ -14,24 +14,23 @@ _NB: gem not yet published, want to have a better documentation first_
 
 ## Usage
 
-1. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):
-
+1. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):  
 `$ fault_tolerant_router generate_config`
 
 2. Edit /etc/fault_tolerant_router.conf
 
-3. Optional: demo how the daemon works, useful if it's the first time you see it:
+3. Optional: demo how the daemon works, useful if it's the first time you see it:  
 `$ fault_tolerant_router --demo monitor`
 
-4. Generate iptables rules and integrate them with your existing ones:
+4. Generate iptables rules and integrate them with your existing ones:  
 `$ fault_tolerant_router generate_iptables`
 
-5. Optional: test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:
+5. Optional: test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
 `$ fault_tolerant_router email_test`
-6. Run the daemon:
-`$ fault_tolerant_router monitor`
+6. Run the daemon:  
+`$ fault_tolerant_router monitor`  
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
-If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line
+If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line:  
 `$ fault_tolerant_router monitor &`
 
 ## Configuration file
