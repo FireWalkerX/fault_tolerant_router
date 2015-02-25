@@ -19,13 +19,13 @@ _NB: gem not yet published, want to have a better documentation first_
 
 2. Edit /etc/fault_tolerant_router.conf
 
-3. Optional: demo how the daemon works, useful if it's the first time you see it:  
+3. _(Optional)_ Demo how the daemon works, useful if it's the first time you see it:  
 `$ fault_tolerant_router --demo monitor`
 
 4. Generate iptables rules and integrate them with your existing ones:  
 `$ fault_tolerant_router generate_iptables`
 
-5. Optional: test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
+5. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
 `$ fault_tolerant_router email_test`
 6. Run the daemon:  
 `$ fault_tolerant_router monitor`  
