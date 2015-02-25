@@ -1,22 +1,26 @@
 # Fault Tolerant Router
 
-This is a Ruby daemon, to be run in the backgound on a Linux router or firewall. It monitors the state of multiple uplinks/providers by pinging some externel IP addresses through the outgoing interfaces. When an uplink goes down it changes the multipath routing removing such uplink and sends an email to the administrator. When an uplink goes up it changes the multipath routing adding such uplink and sends an email to the administrator.
+Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. Outgoing connections are spread through the uplinks in a load balancing fashion via Linux multipath routing. Fault Tolerant Router monitors the state of the uplinks by routinely pinging well known IP addresses (for example Google public DNS servers) through each outgoing interface. Once an uplink goes down, it is excluded from the multipath routing. When it comes back up, it is included again. All of the routing changes are notified by email to the administrator.
 
-Fault Tolerant Router is well tested and already used in production by several years, in several customers sites. I've just released it to GitHub, I will write some documentation in the next days.
+Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
+
+## Requirements
+
+[Ruby](https://www.ruby-lang.org)
 
 ## Installation
 
     $ gem install fault_tolerant_router
 
-And then execute:
+## Usage
 
     $ fault_tolerant_router
 
-## Usage
-
 ## To do
-- [ ] improve documentation
-- [ ] i18n
+- improve documentation
+- i18n
+- test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
+- implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
 
 ## License
 GNU General Public License v2.0, see LICENSE file
