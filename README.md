@@ -22,4 +22,4 @@ And then execute:
 GNU General Public License v2.0, see LICENSE file
 
 ## Author
-Alessandro Zarrilli <alessandro@zarrilli.net>
+Alessandro Zarrilli - <alessandro@zarrilli.net>
