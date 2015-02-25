@@ -11,6 +11,7 @@ Fault Tolerant Router is well tested and has been used in production for several
 ## Installation
 
     $ gem install fault_tolerant_router
+_NB: gem not yet published, want to have a better documentation first_
 
 ## Usage
 
