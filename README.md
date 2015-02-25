@@ -15,6 +15,7 @@ _NB: gem not yet published, want to have a better documentation first_
 ## Usage
 
 1. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):
+
 `$ fault_tolerant_router generate_config`
 
 2. Edit /etc/fault_tolerant_router.conf
