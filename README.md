@@ -9,46 +9,40 @@ Fault Tolerant Router is well tested and has been used in production for several
 [Ruby](https://www.ruby-lang.org)
 
 ## Installation
-
     $ gem install fault_tolerant_router
 _NB: gem not yet published, want to have a better documentation first_
 
 ## Usage
 
 1. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):
-
-    $ fault_tolerant_router generate_config
+`$ fault_tolerant_router generate_config`
 
 2. Edit /etc/fault_tolerant_router.conf
 
-3. Optional: demo how the daemon works
-Useful if you never saw it
+3. Optional: demo how the daemon works, useful if it's the first time you see it:
+`$ fault_tolerant_router --demo monitor`
 
-    $ fault_tolerant_router monitor --demo
+4. Generate iptables rules and integrate them with your existing ones:
+`$ fault_tolerant_router generate_iptables`
 
-4. Generate iptables rules
-
-    $ fault_tolerant_router generate_iptables
-
-5. Optional: test SMTP parameters functionality
-
-    $ fault_tolerant_router email_test
-
-6. Run the daemon
-qualche meccanismo per lanciare in background specifico della disribuzione
-
-    $ fault_tolerant_router monitor --demo
+5. Optional: test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:
+`$ fault_tolerant_router email_test`
+6. Run the daemon:
+`$ fault_tolerant_router monitor`
+Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
+If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line
+`$ fault_tolerant_router monitor &`
 
 ## Configuration file
-descrizione vari parametri
 
 ## Iptables rules
 
 ## Uplink monitor algorithm
 
 ## To do
-- test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
-- implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
+- Test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
+- Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
+- Use [Ruby Daemons](https://github.com/thuehlinger/daemons)
 - i18n
 
 ## License
