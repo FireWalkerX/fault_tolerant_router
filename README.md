@@ -32,8 +32,7 @@ perché si usa rp_filter?
 Linux kernel requirements
 
 ## Installation
-    $ gem install fault_tolerant_router
-_NB: gem not yet published, want to have a better documentation first_
+`$ gem install fault_tolerant_router`
 
 ## Usage
 1. Configure your router interfaces as usual but **don't** set any default route. An interface can have more than one IP address if needed.
@@ -51,6 +50,7 @@ _NB: gem not yet published, want to have a better documentation first_
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
 If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line:  
 `$ fault_tolerant_router monitor &`
+
 ## Configuration file
 The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
 * **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
