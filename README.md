@@ -49,7 +49,10 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 
   * **weight**: optional parameter, it's the preference to assign to the uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
 
-  * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the multipath routing, i.e. the uplink will never be used when choosing one for a new outgoing connection. Exception to this is if some kind of outgoing connection is forced to pass through this uplink, see [Iptables rules][] section.
+  * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the multipath routing, i.e. the uplink will never be used when choosing one for a new outgoing connection. Exception to this is if some kind of outgoing connection is forced to pass through this uplink, see [iptables](#Iptables-rules) section. Even if set to *false*, incoming connections are still possible. Use cases to set it to *false*:
+    * Want to reserve an uplink for incoming connections only, excluding it from outgoing LAN internet traffic. Tipically you may want this because you have a mail server, web server, etc. listening on this uplink.
+    * Temporarily force all of the outgoing LAN internet traffic to pass through the other uplinks, to stress test the other uplinks and determine their bandwidth
+    * Temporarily exclude the uplink to do some reconfiguration, for example changing one of the internet providers.
 
 * **downlinks**
 
@@ -62,6 +65,7 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 ## Uplink monitor algorithm
 
 ## To do
+- Improve documentation (please let me know where it's not clear)
 - Test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
 - Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
 - Use [Ruby Daemons](https://github.com/thuehlinger/daemons)
