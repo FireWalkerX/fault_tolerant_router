@@ -1,6 +1,7 @@
 def generate_iptables
   puts <<END
-#integrate with your existing "iptables-save" configuration, or adapt to work with any other iptables configuration system
+#Integrate with your existing "iptables-save" configuration, or adapt to work
+#with any other iptables configuration system
 
 *mangle
 :PREROUTING ACCEPT [0:0]
@@ -8,9 +9,15 @@ def generate_iptables
 :OUTPUT ACCEPT [0:0]
 :INPUT ACCEPT [0:0]
 
-#new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
-#example for an SMTP server). Uncomment if needed.
-#NB: these are just examples, you can add as many options as you wish: -s, -d, --sport, etc.
+#New outbound connections: force a connection to use a specific uplink instead
+#of participating in the multipath routing. This can be useful if you have an
+#SMTP server that should always send emails originating from a specific IP
+#address (because of PTR DNS records), or if you have some service that you want
+#always to use a particular slow/fast uplink.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as needed: -s, -d,
+#    --sport, etc.
+
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -19,16 +26,19 @@ END
   end
   puts <<END
 
-#mark packets with the outgoing interface:
+#Mark packets with the outgoing interface:
 #- active outbound connections: non-first packets
-#- active outbound connections: first packet, only effective if marking has been done in the section above
+#- active outbound connections: first packet, only effective if marking has been
+#  done in the section above
 #- active inbound connections: returning packets
+
 [0:0] -A PREROUTING -i #{LAN_INTERFACE} -j CONNMARK --restore-mark
 END
   puts "[0:0] -A PREROUTING -i #{DMZ_INTERFACE} -j CONNMARK --restore-mark" if DMZ_INTERFACE
   puts <<END
 
-#new inbound connections: mark with the incoming interface
+#New inbound connections: mark with the incoming interface.
+
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -36,7 +46,9 @@ END
   end
   puts <<END
 
-#new outbound connections: mark with the outgoing interface (chosen by the multipath routing)
+#New outbound connections: mark with the outgoing interface (chosen by the
+#multipath routing).
+
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -52,8 +64,13 @@ COMMIT
 :POSTROUTING ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 
-#DNAT: WAN --> LAN/DMZ. Standard DNAT, uncomment if needed.
-#NB: these are just examples, you can add as many options as you wish: -s, --sport, --dport, etc.
+#DNAT: WAN --> LAN/DMZ. The original destination IP (-d) can be any of the IP
+#addresses assigned to the uplink interface. XXX.XXX.XXX.XXX can be any of your
+#LAN/DMZ IPs.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as you wish: -s,
+#    --sport, --dport, etc.
+
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"
@@ -61,8 +78,14 @@ END
   end
   puts <<END
 
-#SNAT: LAN/DMZ --> WAN: force the usage of a specific source address (for example for an SMTP server). Uncomment if needed.
-#NB: these are just examples, you can add as many options as you wish: -d, --sport, --dport, etc.
+#SNAT: LAN/DMZ --> WAN. Force an outgoing connection to use a specific source
+#address instead of the default one of the outgoing interface. Of course this
+#only makes sense if more than one IP address is assigned to the uplink
+#interface.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as needed: -d,
+#    --sport, --dport, etc.
+
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"
@@ -71,6 +94,7 @@ END
   puts <<END
 
 #SNAT: LAN --> WAN
+
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"
@@ -83,8 +107,9 @@ COMMIT
 
 *filter
 
-#[...] (merge existing rules)
-
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
 :LAN_WAN - [0:0]
 :WAN_LAN - [0:0]
 END
@@ -96,7 +121,12 @@ END
 
   puts <<END
 
-#[...] (merge existing rules)
+#This is just a very basic example, add your own rules for the INPUT chain.
+
+[0:0] -A INPUT -i lo -j ACCEPT
+[0:0] -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+[0:0] -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 END
   UPLINKS.each do |uplink|
@@ -115,7 +145,16 @@ END
   end
   puts <<END
 
-#[...] (merge existing rules)
+#This is just a very basic example, add your own rules for the FORWARD chain.
+
+[0:0] -A LAN_WAN -j ACCEPT
+[0:0] -A WAN_LAN -j REJECT
+END
+  if DMZ_INTERFACE
+    puts '[0:0] -A DMZ_WAN -j ACCEPT'
+    puts '[0:0] -A WAN_DMZ -j ACCEPT'
+  end
+  puts <<END
 
 COMMIT
 END

@@ -103,32 +103,139 @@ Iptables rules are generated using the command
 `$ fault_tolerant_router generate_iptables`
 The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
 
-Rules are documented directly in the generated output. Here is the dump of the generated rules (including comments) using the standard example configuration.
+Rules are directly documented in the generated output, here is a dump using the standard example configuration:
 
-
-
-
-
-
-
-
-
-
-Mangle section:
 ```
-#new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
-#example for an SMTP server). Uncomment if needed.
+#Integrate with your existing "iptables-save" configuration, or adapt to work
+#with any other iptables configuration system
+
+*mangle
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:INPUT ACCEPT [0:0]
+
+#New outbound connections: force a connection to use a specific uplink instead
+#of participating in the multipath routing. This can be useful if you have an
+#SMTP server that should always send emails originating from a specific IP
+#address (because of PTR DNS records), or if you have some service that you want
+#always to use a particular slow/fast uplink.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as needed: -s, -d,
+#    --sport, etc.
+
+#Example Provider 1
+#[0:0] -A PREROUTING -i eth0 -m state --state NEW -p tcp --dport XXX -j CONNMARK --set-mark 1
+#Example Provider 2
+#[0:0] -A PREROUTING -i eth0 -m state --state NEW -p tcp --dport XXX -j CONNMARK --set-mark 2
+#Example Provider 3
+#[0:0] -A PREROUTING -i eth0 -m state --state NEW -p tcp --dport XXX -j CONNMARK --set-mark 3
+
+#Mark packets with the outgoing interface:
+#- active outbound connections: non-first packets
+#- active outbound connections: first packet, only effective if marking has been
+#  done in the section above
+#- active inbound connections: returning packets
+
+[0:0] -A PREROUTING -i eth0 -j CONNMARK --restore-mark
+
+#New inbound connections: mark with the incoming interface.
+
+#Example Provider 1
+[0:0] -A PREROUTING -i eth1 -m state --state NEW -j CONNMARK --set-mark 1
+#Example Provider 2
+[0:0] -A PREROUTING -i eth2 -m state --state NEW -j CONNMARK --set-mark 2
+#Example Provider 3
+[0:0] -A PREROUTING -i eth3 -m state --state NEW -j CONNMARK --set-mark 3
+
+#New outbound connections: mark with the outgoing interface (chosen by the
+#multipath routing).
+
+#Example Provider 1
+[0:0] -A POSTROUTING -o eth1 -m state --state NEW -j CONNMARK --set-mark 1
+#Example Provider 2
+[0:0] -A POSTROUTING -o eth2 -m state --state NEW -j CONNMARK --set-mark 2
+#Example Provider 3
+[0:0] -A POSTROUTING -o eth3 -m state --state NEW -j CONNMARK --set-mark 3
+
+COMMIT
+
+
+*nat
+:PREROUTING ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+
+#DNAT: WAN --> LAN/DMZ. The original destination IP (-d) can be any of the IP
+#addresses assigned to the uplink interface. XXX.XXX.XXX.XXX can be any of your
+#LAN/DMZ IPs.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as you wish: -s,
+#    --sport, --dport, etc.
+
+#Example Provider 1
+#[0:0] -A PREROUTING -i eth1 -d 1.0.0.2 -j DNAT --to-destination XXX.XXX.XXX.XXX
+#Example Provider 2
+#[0:0] -A PREROUTING -i eth2 -d 2.0.0.2 -j DNAT --to-destination XXX.XXX.XXX.XXX
+#Example Provider 3
+#[0:0] -A PREROUTING -i eth3 -d 3.0.0.2 -j DNAT --to-destination XXX.XXX.XXX.XXX
+
+#SNAT: LAN/DMZ --> WAN. Force an outgoing connection to use a specific source
+#address instead of the default one of the outgoing interface. Of course this
+#only makes sense if more than one IP address is assigned to the uplink
+#interface.
+#Uncomment if needed.
+#NB: these are just examples, you can add as many options as needed: -d,
+#    --sport, --dport, etc.
+
+#Example Provider 1
+#[0:0] -A POSTROUTING -s XXX.XXX.XXX.XXX -o eth1 -j SNAT --to-source YYY.YYY.YYY.YYY
+#Example Provider 2
+#[0:0] -A POSTROUTING -s XXX.XXX.XXX.XXX -o eth2 -j SNAT --to-source YYY.YYY.YYY.YYY
+#Example Provider 3
+#[0:0] -A POSTROUTING -s XXX.XXX.XXX.XXX -o eth3 -j SNAT --to-source YYY.YYY.YYY.YYY
+
+#SNAT: LAN --> WAN
+
+#Example Provider 1
+[0:0] -A POSTROUTING -o eth1 -j SNAT --to-source 1.0.0.2
+#Example Provider 2
+[0:0] -A POSTROUTING -o eth2 -j SNAT --to-source 2.0.0.2
+#Example Provider 3
+[0:0] -A POSTROUTING -o eth3 -j SNAT --to-source 3.0.0.2
+
+COMMIT
+
+
+*filter
+
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:LAN_WAN - [0:0]
+:WAN_LAN - [0:0]
+
+#This is just a very basic example, add your own rules for the INPUT chain.
+
+[0:0] -A INPUT -i lo -j ACCEPT
+[0:0] -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+[0:0] -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+[0:0] -A FORWARD -i eth0 -o eth1 -j LAN_WAN
+[0:0] -A FORWARD -i eth0 -o eth2 -j LAN_WAN
+[0:0] -A FORWARD -i eth0 -o eth3 -j LAN_WAN
+[0:0] -A FORWARD -i eth1 -o eth0 -j WAN_LAN
+[0:0] -A FORWARD -i eth2 -o eth0 -j WAN_LAN
+[0:0] -A FORWARD -i eth3 -o eth0 -j WAN_LAN
+
+#This is just a very basic example, add your own rules for the FORWARD chain.
+
+[0:0] -A LAN_WAN -j ACCEPT
+[0:0] -A WAN_LAN -j REJECT
+
+COMMIT
 ```
-You can optionally force some kind of outgoing connection to always use a specific uplink instead of participating in the multipath routing: this could be useful if you have an SMTP server that should always send emails from a specific IP address (because of PTR DNS records), or if you have some service that you want always be using a particular slow of fast uplink.
-Nat section:
-```
-#DNAT: WAN --> DMZ. Uncomment if needed.
-```
-You can optionally activate destination NAT on any IP address of the uplink interfaces.
-```
-#SNAT: LAN/DMZ --> WAN: force the usage of a specific source address (for example for an SMTP server). Uncomment if needed.
-```
-You can optionally force some kind of outgoing connection to be *source-natted* from a specific IP address instead of the default one of the outgoing interface. This could be useful in case of an SMTP server that should always send emails from a specific IP address (because of PTR DNS records).
 
 ## To do
 - Improve documentation: please let me know where it's not clear.
