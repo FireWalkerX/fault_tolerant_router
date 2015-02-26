@@ -10,6 +10,7 @@ def generate_iptables
 
 #new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
 #example for an SMTP server). Uncomment if needed.
+#NB: these are just examples, you can add as many options as you wish: -s, -d, --sport, etc.
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -20,14 +21,14 @@ END
 
 #mark packets with the outgoing interface:
 #- active outbound connections: non-first packets
+#- active outbound connections: first packet, only effective if marking has been done in the section above
 #- active inbound connections: returning packets
-#- active outbound connections: only effective if a previous marking has been done (for example for an SMTP server)
 [0:0] -A PREROUTING -i #{LAN_INTERFACE} -j CONNMARK --restore-mark
 END
   puts "[0:0] -A PREROUTING -i #{DMZ_INTERFACE} -j CONNMARK --restore-mark" if DMZ_INTERFACE
   puts <<END
 
-#new inbound connections: mark with the incoming interface (decided by the connecting host)
+#new inbound connections: mark with the incoming interface
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -35,7 +36,7 @@ END
   end
   puts <<END
 
-#new outbound connections: mark with the outgoing interface (decided by the multipath routing)
+#new outbound connections: mark with the outgoing interface (chosen by the multipath routing)
 END
   UPLINKS.each_with_index do |uplink, i|
     puts "##{uplink[:description]}"
@@ -51,7 +52,8 @@ COMMIT
 :POSTROUTING ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 
-#DNAT: WAN --> LAN/DMZ. Uncomment if needed.
+#DNAT: WAN --> LAN/DMZ. Standard DNAT, uncomment if needed.
+#NB: these are just examples, you can add as many options as you wish: -s, --sport, --dport, etc.
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"
@@ -60,6 +62,7 @@ END
   puts <<END
 
 #SNAT: LAN/DMZ --> WAN: force the usage of a specific source address (for example for an SMTP server). Uncomment if needed.
+#NB: these are just examples, you can add as many options as you wish: -d, --sport, --dport, etc.
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"

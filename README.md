@@ -4,6 +4,22 @@ Fault Tolerant Router is a daemon, running in background on a Linux router or fi
 
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
+## How it works
+The system if based on the interaction of Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection (LAN/DMZ to WAN) and incoming connections (WAN to LAN/DMZ).
+  Outgoing connections:
+  The first packet of an outgoing connection is sent through any one of the uplink interfaces, in round-robin fashion, letting the Linux multipath routing decide which one. The connection is marked with the outgoing interface using iptables, so that all subsequent packets of that connection are sent through the same interface (otherwise servers you connect to would see packets coming from different IP addresses and nothing would work).
+  Incoming connections:
+  When there is a new incoming connection, the connection is marked with the incoming interface using iptables, so that all subsequent return packets (sent from out LAN/DMZ to WAN) will be sent through the same uplink.
+
+This is obtained by having a default multipath routing table for new outgoing connections and a specific routing table for each uplink for already established outgoing connections and for incoming ones.
+
+The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful (see configuration options) the uplink is considered up, if not it's considered down. If a state change is detected from the previous check, the default multipath routing table (used for outgoing connections) is changed accordingly and the administrator is notified by email.
+
+NB: if no uplink seems to be functional, all of them are added to the default multipath routing table
+NB: it's important not to be very strict because it could happen that some ping packets get randomly lost along the way, ore some IPs may be down
+NB: it's important to ping ip addresses far away because it happened to me personally that a provider had some routing temporary problems.
+
+
 ## Requirements
 
 [Ruby](https://www.ruby-lang.org)
@@ -77,6 +93,9 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 Iptables rules are generated using the command
 `$ fault_tolerant_router generate_iptables`
 The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
+
+Rules are documented directly in the generated output. Here is the dump of the generated rules (including comments) using the standard example configuration.
+
 Mangle section:
 ```
 #new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
@@ -91,7 +110,7 @@ You can optionally activate destination NAT on any IP address of the uplink inte
 ```
 #SNAT: LAN/DMZ --> WAN: force the usage of a specific source address (for example for an SMTP server). Uncomment if needed.
 ```
-You can optionally force some kind of outgoing connection to be *source-natted* from a specifica IP address instead of the default one of the outgoing interface. This could be useful in case of an SMTP server that should always send emails from a specific IP address (because of PTR DNS records).
+You can optionally force some kind of outgoing connection to be *source-natted* from a specific IP address instead of the default one of the outgoing interface. This could be useful in case of an SMTP server that should always send emails from a specific IP address (because of PTR DNS records).
 
 ## Uplink monitor algorithm
 
@@ -117,3 +136,5 @@ perché è meglio pingare roba lontana piuttosto che vicina
 requisiti kernel di linux
 spiegare il funzionamento generale della marcatura dei pacchetti
 modificare direttamente generate_iptables aggiungendo esempio completo
+perché si usa rp_filter?
+rivedere probabilità random
