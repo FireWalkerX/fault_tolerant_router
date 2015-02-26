@@ -58,6 +58,17 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
   * **ping_retries**: number of ping retries before giving up on an ip
   * **interval**: seconds between a check of the uplinks and the next one
 
+* **log**
+  * **file**: log file path
+  * **max_size**: maximum log file size (in bytes). Once reached this size, the log file will be rotated.
+  * **old_files**: number of old rotated files to keep
+
+* **email**
+  * **send**: set to *true* or *false* to enable or disable email notification
+  * **sender**: email sender
+  * **recipients**: an array of email recipients
+  * **smtp_parameters**: see http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
+
 ## Iptables rules
 
 ## Uplink monitor algorithm
