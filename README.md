@@ -60,6 +60,10 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 
   * **dmz**: DMZ interface, leave blank if you have no DMZ
 
+* **tests**
+
+  * **ips**: an array of IPs to ping to verify the uplinks state. You can add as many as you wish. Predefined ones are Google DNS, OpenDNS DNS, other public DNS. Every time an uplink is tested the ips are shuffled, so listing order has no importance.
+
 ## Iptables rules
 
 ## Uplink monitor algorithm
@@ -81,3 +85,4 @@ configura interfacce normalmente ma
 disable default routing della distribuzione
 il bilanciamento funziona per la lan
 le connessioni passano sempre dallo stesso uplink per via del caching
+perché è meglio pingare roba lontana piuttosto che vicina
