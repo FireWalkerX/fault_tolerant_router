@@ -46,12 +46,11 @@ _NB: gem not yet published, want to have a better documentation first_
 `$ fault_tolerant_router generate_iptables`
 6. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
 `$ fault_tolerant_router email_test`
-7. Run the daemon:
+7. Run the daemon:  
 `$ fault_tolerant_router monitor`  
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
 If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line:  
 `$ fault_tolerant_router monitor &`
-
 ## Configuration file
 The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
 * **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
