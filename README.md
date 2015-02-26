@@ -4,8 +4,19 @@ Fault Tolerant Router is a daemon, running in background on a Linux router or fi
 
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
+
+
+
+
+
+
+
+
+
+
+
 ## How it works
-The system if based on the interaction of Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection and incoming connections.
+The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection and incoming connections.
   Outgoing connections (from LAN/DMZ to WAN):
   The first packet of an outgoing connection is sent through any one of the uplink interfaces, in round-robin fashion, letting the Linux multipath routing decide which one. The connection is marked with the outgoing interface using iptables, so that all subsequent packets of that connection and related ones are sent through the same interface (otherwise servers you connect to would see packets coming from different IP addresses and nothing would work).
   Incoming connections (from WAN to LAN/DMZ):
@@ -22,6 +33,21 @@ The daemon monitors the state of the uplinks by pinging well known IP addresses 
 NB: if no uplink seems to be functional, all of them are added to the default multipath routing table
 NB: it's important not to be very strict because it could happen that some ping packets get randomly lost along the way, ore some IPs may be down
 NB: it's important to ping ip addresses far away because it happened to me personally that a provider had some routing temporary problems.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Requirements
 * [Ruby](https://www.ruby-lang.org)
