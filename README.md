@@ -94,12 +94,10 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 * **base_fwmark**: just need to change if you are already using packet marking, to avoid overlapping
 
 ## Iptables rules
-Iptables rules are generated using the command
-`$ fault_tolerant_router generate_iptables`
+Iptables rules are generated with the command:  
+`$ fault_tolerant_router generate_iptables`  
 The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
-
-Rules are directly documented in the generated output, here is a dump using the standard example configuration:
-
+Documentation is included in the output, here is a dump using the standard example configuration:
 ```
 #Integrate with your existing "iptables-save" configuration, or adapt to work
 #with any other iptables configuration system
