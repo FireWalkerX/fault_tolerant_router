@@ -5,13 +5,17 @@ Fault Tolerant Router is a daemon, running in background on a Linux router or fi
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
 ## How it works
-The system if based on the interaction of Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection (LAN/DMZ to WAN) and incoming connections (WAN to LAN/DMZ).
-  Outgoing connections:
-  The first packet of an outgoing connection is sent through any one of the uplink interfaces, in round-robin fashion, letting the Linux multipath routing decide which one. The connection is marked with the outgoing interface using iptables, so that all subsequent packets of that connection are sent through the same interface (otherwise servers you connect to would see packets coming from different IP addresses and nothing would work).
-  Incoming connections:
+The system if based on the interaction of Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection and incoming connections.
+  Outgoing connections (from LAN/DMZ to WAN):
+  The first packet of an outgoing connection is sent through any one of the uplink interfaces, in round-robin fashion, letting the Linux multipath routing decide which one. The connection is marked with the outgoing interface using iptables, so that all subsequent packets of that connection and related ones are sent through the same interface (otherwise servers you connect to would see packets coming from different IP addresses and nothing would work).
+  Incoming connections (from WAN to LAN/DMZ):
   When there is a new incoming connection, the connection is marked with the incoming interface using iptables, so that all subsequent return packets (sent from out LAN/DMZ to WAN) will be sent through the same uplink.
 
 This is obtained by having a default multipath routing table for new outgoing connections and a specific routing table for each uplink for already established outgoing connections and for incoming ones.
+
+Routes are cached.
+
+## Uplink monitor algorithm
 
 The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful (see configuration options) the uplink is considered up, if not it's considered down. If a state change is detected from the previous check, the default multipath routing table (used for outgoing connections) is changed accordingly and the administrator is notified by email.
 
@@ -19,10 +23,13 @@ NB: if no uplink seems to be functional, all of them are added to the default mu
 NB: it's important not to be very strict because it could happen that some ping packets get randomly lost along the way, ore some IPs may be down
 NB: it's important to ping ip addresses far away because it happened to me personally that a provider had some routing temporary problems.
 
+perché si usa rp_filter?
+
 
 ## Requirements
 
 [Ruby](https://www.ruby-lang.org)
+Linux kernel requirements
 
 ## Installation
     $ gem install fault_tolerant_router
@@ -30,21 +37,23 @@ _NB: gem not yet published, want to have a better documentation first_
 
 ## Usage
 
-1. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):  
+1. Configure your router interfaces as usual but **don't** set any default route.
+
+2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):
 `$ fault_tolerant_router generate_config`
 
-2. Edit /etc/fault_tolerant_router.conf
+3. Edit /etc/fault_tolerant_router.conf
 
-3. _(Optional)_ Demo how the daemon works, useful if it's the first time you see it:  
+4. _(Optional)_ Demo how the daemon works, useful if it's the first time you see it:
 `$ fault_tolerant_router --demo monitor`
 
-4. Generate iptables rules and integrate them with your existing ones:  
+5. Generate iptables rules and integrate them with your existing ones:
 `$ fault_tolerant_router generate_iptables`
 
-5. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
+6. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:
 `$ fault_tolerant_router email_test`
 
-6. Run the daemon:
+7. Run the daemon:
 `$ fault_tolerant_router monitor`  
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
 If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line:  
@@ -96,6 +105,15 @@ The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you 
 
 Rules are documented directly in the generated output. Here is the dump of the generated rules (including comments) using the standard example configuration.
 
+
+
+
+
+
+
+
+
+
 Mangle section:
 ```
 #new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
@@ -112,14 +130,10 @@ You can optionally activate destination NAT on any IP address of the uplink inte
 ```
 You can optionally force some kind of outgoing connection to be *source-natted* from a specific IP address instead of the default one of the outgoing interface. This could be useful in case of an SMTP server that should always send emails from a specific IP address (because of PTR DNS records).
 
-## Uplink monitor algorithm
-
 ## To do
-- Improve documentation (please let me know where it's not clear)
-- Add a complete iptables rules example
-- Test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
-- Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
-- Use [Ruby Daemons](https://github.com/thuehlinger/daemons)
+- Improve documentation: please let me know where it's not clear.
+- Test VLAN interfaces: Fault Tolerant Router has always been used with physical interfaces, each uplink on it's own physical interface.
+- Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html): this way we could connect all of the uplinks to a single Linux physical interface through a switch, without using VLANs.
 - i18n
 
 ## License
@@ -127,14 +141,3 @@ GNU General Public License v2.0, see LICENSE file
 
 ## Author
 Alessandro Zarrilli - <alessandro@zarrilli.net>
-
-configura interfacce normalmente ma
-disable default routing della distribuzione
-il bilanciamento funziona per la lan
-le connessioni passano sempre dallo stesso uplink per via del caching
-perché è meglio pingare roba lontana piuttosto che vicina
-requisiti kernel di linux
-spiegare il funzionamento generale della marcatura dei pacchetti
-modificare direttamente generate_iptables aggiungendo esempio completo
-perché si usa rp_filter?
-rivedere probabilità random
