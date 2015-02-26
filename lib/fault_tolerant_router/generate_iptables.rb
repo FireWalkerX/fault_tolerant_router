@@ -51,7 +51,7 @@ COMMIT
 :POSTROUTING ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 
-#DNAT: WAN --> DMZ. Uncomment if needed.
+#DNAT: WAN --> LAN/DMZ. Uncomment if needed.
 END
   UPLINKS.each do |uplink|
     puts "##{uplink[:description]}"

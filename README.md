@@ -74,11 +74,30 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 * **base_fwmark**: just need to change if you are already using packet marking, to avoid overlapping
 
 ## Iptables rules
+Iptables rules are generated using the command
+`$ fault_tolerant_router generate_iptables`
+The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
+Mangle section:
+```
+#new outbound connections: force connection to use a specific uplink instead of letting multipath routing decide (for
+#example for an SMTP server). Uncomment if needed.
+```
+You can optionally force some kind of outgoing connection to always use a specific uplink instead of participating in the multipath routing: this could be useful if you have an SMTP server that should always send emails from a specific IP address (because of PTR DNS records), or if you have some service that you want always be using a particular slow of fast uplink.
+Nat section:
+```
+#DNAT: WAN --> DMZ. Uncomment if needed.
+```
+You can optionally activate destination NAT on any IP address of the uplink interfaces.
+```
+#SNAT: LAN/DMZ --> WAN: force the usage of a specific source address (for example for an SMTP server). Uncomment if needed.
+```
+You can optionally force some kind of outgoing connection to be *source-natted* from a specifica IP address instead of the default one of the outgoing interface. This could be useful in case of an SMTP server that should always send emails from a specific IP address (because of PTR DNS records).
 
 ## Uplink monitor algorithm
 
 ## To do
 - Improve documentation (please let me know where it's not clear)
+- Add a complete iptables rules example
 - Test it with VLAN interfaces (has always been used with physical interfaces: each uplink on it's own physical interface)
 - Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html), this way we could have all of the uplinks attached via a switch to a single Linux physical interface, without using VLANs
 - Use [Ruby Daemons](https://github.com/thuehlinger/daemons)
@@ -96,3 +115,5 @@ il bilanciamento funziona per la lan
 le connessioni passano sempre dallo stesso uplink per via del caching
 perché è meglio pingare roba lontana piuttosto che vicina
 requisiti kernel di linux
+spiegare il funzionamento generale della marcatura dei pacchetti
+modificare direttamente generate_iptables aggiungendo esempio completo
