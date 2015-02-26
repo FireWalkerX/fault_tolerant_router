@@ -27,13 +27,35 @@ _NB: gem not yet published, want to have a better documentation first_
 
 5. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
 `$ fault_tolerant_router email_test`
-6. Run the daemon:  
+
+6. Run the daemon:
 `$ fault_tolerant_router monitor`  
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
 If you want a quick and dirty way to run the program in background, just add an ampersand at the end of the command line:  
 `$ fault_tolerant_router monitor &`
 
 ## Configuration file
+The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
+
+* **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
+
+  * **interface**: the network interface where the uplink is attached. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried with VLAN interfaces (it's in the to do list).
+
+  * **ip**: primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify the primary one.
+
+  * **gateway**: the gateway on this interface, usually the provider's router IP address.
+
+  * **description**: used in the alert emails.
+
+  * **weight**: preference to assign to the uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
+
+  * **weight**: preference to assign to the uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
+
+* **downlinks**
+
+  * **lan**: LAN interface
+
+  * **dmz**: DMZ interface, leave blank if you have no DMZ
 
 ## Iptables rules
 
@@ -50,3 +72,6 @@ GNU General Public License v2.0, see LICENSE file
 
 ## Author
 Alessandro Zarrilli - <alessandro@zarrilli.net>
+
+configura interfacce normalmente ma
+disable default routing della distribuzione
