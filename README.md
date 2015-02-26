@@ -1,6 +1,6 @@
 # Fault Tolerant Router
 
-Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. Outgoing connections are spread through the uplinks in a load balancing fashion via Linux multipath routing. Fault Tolerant Router monitors the state of the uplinks by routinely pinging well known IP addresses (for example Google public DNS servers) through each outgoing interface. Once an uplink goes down, it is excluded from the multipath routing. When it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
+Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. Outgoing connections are spread through the uplinks in a load balancing fashion using Linux multipath routing. The daemon monitors the state of the uplinks by routinely pinging well known IP addresses (Google public DNS servers, etc.) through each outgoing interface: once an uplink goes down, it is excluded from the multipath routing, when it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
 
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
@@ -22,9 +22,6 @@ The daemon monitors the state of the uplinks by pinging well known IP addresses 
 NB: if no uplink seems to be functional, all of them are added to the default multipath routing table
 NB: it's important not to be very strict because it could happen that some ping packets get randomly lost along the way, ore some IPs may be down
 NB: it's important to ping ip addresses far away because it happened to me personally that a provider had some routing temporary problems.
-
-perché si usa rp_filter?
-
 
 ## Requirements
 * [Ruby](https://www.ruby-lang.org)
