@@ -72,28 +72,23 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
     * Want to reserve an uplink for incoming connections only, excluding it from outgoing LAN internet traffic. Tipically you may want this because you have a mail server, web server, etc. listening on this uplink.
     * Temporarily force all of the outgoing LAN internet traffic to pass through the other uplinks, to stress test the other uplinks and determine their bandwidth
     * Temporarily exclude the uplink to do some reconfiguration, for example changing one of the internet providers.
-
 * **downlinks**
   * **lan**: LAN interface
   * **dmz**: DMZ interface, leave blank if you have no DMZ
-
 * **tests**
   * **ips**: an array of IPs to ping to verify the uplinks state. You can add as many as you wish. Predefined ones are Google DNS, OpenDNS DNS, other public DNS. Every time an uplink is tested the ips are shuffled, so listing order has no importance.
   * **required_successful**: number of successfully pinged ips to consider an uplink to be functional
   * **ping_retries**: number of ping retries before giving up on an ip
   * **interval**: seconds between a check of the uplinks and the next one
-
 * **log**
   * **file**: log file path
   * **max_size**: maximum log file size (in bytes). Once reached this size, the log file will be rotated.
   * **old_files**: number of old rotated files to keep
-
 * **email**
   * **send**: set to *true* or *false* to enable or disable email notification
   * **sender**: email sender
   * **recipients**: an array of email recipients
   * **smtp_parameters**: see http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
-
 * **base_table**: just need to change if you are already using [multiple routing tables](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
 * **base_priority**: just need to change if you are already using [ip rule](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
 * **base_fwmark**: just need to change if you are already using packet marking, to avoid overlapping
