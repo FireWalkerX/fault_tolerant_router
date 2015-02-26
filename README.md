@@ -27,9 +27,11 @@ perché si usa rp_filter?
 
 
 ## Requirements
-
-[Ruby](https://www.ruby-lang.org)
-Linux kernel requirements
+* [Ruby](https://www.ruby-lang.org)
+* A Linux kernel with the following compiled options:
+  * CONFIG_IP_ADVANCED_ROUTER
+  * CONFIG_IP_MULTIPLE_TABLES
+  * CONFIG_IP_ROUTE_MULTIPATH
 
 ## Installation
 `$ gem install fault_tolerant_router`
