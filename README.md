@@ -69,6 +69,10 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
   * **recipients**: an array of email recipients
   * **smtp_parameters**: see http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
 
+* **base_table**: just need to change if you are already using [multiple routing tables](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
+* **base_priority**: just need to change if you are already using [ip rule](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
+* **base_fwmark**: just need to change if you are already using packet marking, to avoid overlapping
+
 ## Iptables rules
 
 ## Uplink monitor algorithm
@@ -91,3 +95,4 @@ disable default routing della distribuzione
 il bilanciamento funziona per la lan
 le connessioni passano sempre dallo stesso uplink per via del caching
 perché è meglio pingare roba lontana piuttosto che vicina
+requisiti kernel di linux
