@@ -36,23 +36,16 @@ Linux kernel requirements
 _NB: gem not yet published, want to have a better documentation first_
 
 ## Usage
-
-1. Configure your router interfaces as usual but **don't** set any default route.
-
-2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):
+1. Configure your router interfaces as usual but **don't** set any default route. An interface can have more than one IP address if needed.
+2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the --config option to set another location):  
 `$ fault_tolerant_router generate_config`
-
 3. Edit /etc/fault_tolerant_router.conf
-
-4. _(Optional)_ Demo how the daemon works, useful if it's the first time you see it:
+4. _(Optional)_ Demo how Fault Tolerant Router works, to familiarize with it:  
 `$ fault_tolerant_router --demo monitor`
-
-5. Generate iptables rules and integrate them with your existing ones:
+5. Generate iptables rules and integrate them with your existing ones:  
 `$ fault_tolerant_router generate_iptables`
-
-6. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:
+6. _(Optional)_ Test email notification, to be sure SMTP parameters are correct and the administrator will get notifications:  
 `$ fault_tolerant_router email_test`
-
 7. Run the daemon:
 `$ fault_tolerant_router monitor`  
 Previous command will actually run Fault Tolerant Router in foreground. To run it in background you should use your Linux distribution specific method to start it as a system service. See for example [start-stop-daemon](http://manned.org/start-stop-daemon).
@@ -61,7 +54,6 @@ If you want a quick and dirty way to run the program in background, just add an 
 
 ## Configuration file
 The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
-
 * **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
   * **interface**: the network interface where the uplink is attached. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried with VLAN interfaces (it's in the to do list).
   * **ip**: primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify the primary one.
@@ -232,7 +224,7 @@ COMMIT
 
 ## To do
 - Improve documentation: please let me know where it's not clear.
-- Test VLAN interfaces: Fault Tolerant Router has always been used with physical interfaces, each uplink on it's own physical interface.
+- Test using VLAN interfaces: Fault Tolerant Router has always been used with physical interfaces, each uplink on it's own physical interface.
 - Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html): this way we could connect all of the uplinks to a single Linux physical interface through a switch, without using VLANs.
 - i18n
 
