@@ -38,31 +38,25 @@ If you want a quick and dirty way to run the program in background, just add an 
 The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
 
 * **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
-
   * **interface**: the network interface where the uplink is attached. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried with VLAN interfaces (it's in the to do list).
-
   * **ip**: primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify the primary one.
-
   * **gateway**: the gateway on this interface, usually the provider's router IP address.
-
   * **description**: used in the alert emails.
-
   * **weight**: optional parameter, it's the preference to assign to the uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
-
   * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the multipath routing, i.e. the uplink will never be used when choosing one for a new outgoing connection. Exception to this is if some kind of outgoing connection is forced to pass through this uplink, see [iptables](#Iptables-rules) section. Even if set to *false*, incoming connections are still possible. Use cases to set it to *false*:
     * Want to reserve an uplink for incoming connections only, excluding it from outgoing LAN internet traffic. Tipically you may want this because you have a mail server, web server, etc. listening on this uplink.
     * Temporarily force all of the outgoing LAN internet traffic to pass through the other uplinks, to stress test the other uplinks and determine their bandwidth
     * Temporarily exclude the uplink to do some reconfiguration, for example changing one of the internet providers.
 
 * **downlinks**
-
   * **lan**: LAN interface
-
   * **dmz**: DMZ interface, leave blank if you have no DMZ
 
 * **tests**
-
   * **ips**: an array of IPs to ping to verify the uplinks state. You can add as many as you wish. Predefined ones are Google DNS, OpenDNS DNS, other public DNS. Every time an uplink is tested the ips are shuffled, so listing order has no importance.
+  * **required_successful**: number of successfully pinged ips to consider an uplink to be functional
+  * **ping_retries**: number of ping retries before giving up on an ip
+  * **interval**: seconds between a check of the uplinks and the next one
 
 ## Iptables rules
 
