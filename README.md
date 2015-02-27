@@ -39,9 +39,9 @@ If no uplink is up, all of them are added to the default *multipath routing* tab
 
 ## Usage
 1. Configure your router interfaces as usual but **don't** set any default route. An interface may have more than one IP address if needed.
-2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the *--config* option to set another location):  
+2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the `--config` option to set another location):  
 `$ fault_tolerant_router generate_config`
-3. Edit */etc/fault_tolerant_router.conf*
+3. Edit /etc/fault_tolerant_router.conf
 4. _(Optional)_ Demo how Fault Tolerant Router works, to familiarize with it:  
 `$ fault_tolerant_router --demo monitor`
 5. Generate iptables rules and integrate them with your existing ones:  
@@ -55,7 +55,7 @@ If you want a quick and dirty way to run the program in background, just add an 
 `$ fault_tolerant_router monitor &`
 
 ## Configuration file
-The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of some of the options:
+The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of the options:
 * **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
   * **interface**: the network interface where the uplink is attached. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried with VLAN interfaces (it's in the to do list).
   * **ip**: primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify the primary one.
