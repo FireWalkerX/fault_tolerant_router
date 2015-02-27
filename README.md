@@ -25,6 +25,8 @@ The IP addresses to ping and the number of required successful pings is configur
 * It's better not to ping too near hosts (for example your provider routers), because your provider could be temporarily disconnected from the rest of the internet (it happened...), so your uplink would result as up while it's actually unusable.
 * Sometimes an uplink can be not completely up or completely down, it's just "disturbed" and looses a lot of packets, being almost unusable: it's better to consider such uplink as down, so don't require too few successful pings, otherwise it may be considered up, because a few pings may pass through a "disturbed" link.
 
+The order of IP addresses in *tests/ips* configuration parameter is not important, because the list is shuffled before every uplink check.
+
 If no uplink is up, all of them are added to the default *multipath routing* table, to get some bandwidth as soon as one uplink comes back up.
 
 ## Requirements
