@@ -16,15 +16,19 @@ Fault Tolerant Router is well tested and has been used in production for several
 
 
 ## How it works
-The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. The system differentiates between outgoing connection and incoming connections.
-  Outgoing connections (from LAN/DMZ to WAN):
-  The first packet of an outgoing connection is sent through any one of the uplink interfaces, in round-robin fashion, letting the Linux multipath routing decide which one. The connection is marked with the outgoing interface using iptables, so that all subsequent packets of that connection and related ones are sent through the same interface (otherwise servers you connect to would see packets coming from different IP addresses and nothing would work).
-  Incoming connections (from WAN to LAN/DMZ):
-  When there is a new incoming connection, the connection is marked with the incoming interface using iptables, so that all subsequent return packets (sent from out LAN/DMZ to WAN) will be sent through the same uplink.
+The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing and incoming connections have a different behaviour:
+* Outgoing connections (from LAN/DMZ to WAN):
+  * New connections:
+    The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptabales POSTROUTING chain), the iptables marks the connection with the outgoing interface, so that all the connection subsequent packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
+  * Established connections:
+    Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the id of the outgoing interface that was assigned to the connection. This way, thanks to ip policy routing, the packet will pass through a routing table that directs all the packets to a specific outgoing interface, the one previously assigned to the connection.
+
+* Incoming connections (from WAN to LAN/DMZ):
+
+
+When there is a new incoming connection, the connection is marked with the incoming interface using iptables, so that all subsequent return packets (sent from out LAN/DMZ to WAN) will be sent through the same uplink.
 
 This is obtained by having a default multipath routing table for new outgoing connections and a specific routing table for each uplink for already established outgoing connections and for incoming ones.
-
-Routes are cached.
 
 ## Uplink monitor algorithm
 
@@ -48,10 +52,9 @@ NB: it's important to ping ip addresses far away because it happened to me perso
 
 
 
-
 ## Requirements
 * [Ruby](https://www.ruby-lang.org)
-* A Linux kernel with the following compiled options:
+* A Linux kernel with the following compiled options (they are standard in main Linux distributions):
   * CONFIG_IP_ADVANCED_ROUTER
   * CONFIG_IP_MULTIPLE_TABLES
   * CONFIG_IP_ROUTE_MULTIPATH
@@ -129,7 +132,9 @@ Documentation is included in the output, here is a dump using the standard examp
 #SMTP server that should always send emails originating from a specific IP
 #address (because of PTR DNS records), or if you have some service that you want
 #always to use a particular slow/fast uplink.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as needed: -s, -d,
 #    --sport, etc.
 
@@ -141,10 +146,15 @@ Documentation is included in the output, here is a dump using the standard examp
 #[0:0] -A PREROUTING -i eth0 -m state --state NEW -p tcp --dport XXX -j CONNMARK --set-mark 3
 
 #Mark packets with the outgoing interface:
-#- active outbound connections: non-first packets
-#- active outbound connections: first packet, only effective if marking has been
-#  done in the section above
-#- active inbound connections: returning packets
+#
+#- established outbound connections: mark non-first packets (first packet will
+#  be marked as 0, as a standard unmerked packet, because the connection has not
+#  yet been marked with CONNMARK --set-mark)
+#
+#- new outbound connections: mark first packet, only effective if marking has
+#  been done in the section above
+#
+#- established inbound connections: mark returning packets (from LAN/DMZ to WAN)
 
 [0:0] -A PREROUTING -i eth0 -j CONNMARK --restore-mark
 
@@ -178,7 +188,9 @@ COMMIT
 #DNAT: WAN --> LAN/DMZ. The original destination IP (-d) can be any of the IP
 #addresses assigned to the uplink interface. XXX.XXX.XXX.XXX can be any of your
 #LAN/DMZ IPs.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as you wish: -s,
 #    --sport, --dport, etc.
 
@@ -193,7 +205,9 @@ COMMIT
 #address instead of the default one of the outgoing interface. Of course this
 #only makes sense if more than one IP address is assigned to the uplink
 #interface.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as needed: -d,
 #    --sport, --dport, etc.
 

@@ -14,7 +14,9 @@ def generate_iptables
 #SMTP server that should always send emails originating from a specific IP
 #address (because of PTR DNS records), or if you have some service that you want
 #always to use a particular slow/fast uplink.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as needed: -s, -d,
 #    --sport, etc.
 
@@ -27,10 +29,15 @@ END
   puts <<END
 
 #Mark packets with the outgoing interface:
-#- active outbound connections: non-first packets
-#- active outbound connections: first packet, only effective if marking has been
-#  done in the section above
-#- active inbound connections: returning packets
+#
+#- established outbound connections: mark non-first packets (first packet will
+#  be marked as 0, as a standard unmerked packet, because the connection has not
+#  yet been marked with CONNMARK --set-mark)
+#
+#- new outbound connections: mark first packet, only effective if marking has
+#  been done in the section above
+#
+#- established inbound connections: mark returning packets (from LAN/DMZ to WAN)
 
 [0:0] -A PREROUTING -i #{LAN_INTERFACE} -j CONNMARK --restore-mark
 END
@@ -67,7 +74,9 @@ COMMIT
 #DNAT: WAN --> LAN/DMZ. The original destination IP (-d) can be any of the IP
 #addresses assigned to the uplink interface. XXX.XXX.XXX.XXX can be any of your
 #LAN/DMZ IPs.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as you wish: -s,
 #    --sport, --dport, etc.
 
@@ -82,7 +91,9 @@ END
 #address instead of the default one of the outgoing interface. Of course this
 #only makes sense if more than one IP address is assigned to the uplink
 #interface.
+#
 #Uncomment if needed.
+#
 #NB: these are just examples, you can add as many options as needed: -d,
 #    --sport, --dport, etc.
 
