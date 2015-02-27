@@ -15,22 +15,18 @@ Fault Tolerant Router is well tested and has been used in production for several
 
 
 
-## How it works
+## Multipath routing, iptables and ip policy routing interaction
 The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing and incoming connections have a different behaviour:
 * Outgoing connections (from LAN/DMZ to WAN):
   * New connections:
-    The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptabales POSTROUTING chain), the iptables marks the connection with the outgoing interface, so that all the connection subsequent packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
+    The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptables POSTROUTING chain), iptables marks the connection with the outgoing interface id, so that all the connection subsequent packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
   * Established connections:
-    Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the id of the outgoing interface that was assigned to the connection. This way, thanks to ip policy routing, the packet will pass through a routing table that directs all the packets to a specific outgoing interface, the one previously assigned to the connection.
+    Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the packet will pass through a routing table directing it to the connection specific outgoing interface.
 
 * Incoming connections (from WAN to LAN/DMZ):
+    The incoming interface is obviously decided by the connecting host, connecting to one of the IP addresses assigned to our uplink interfaces. Just after the packet enters the router (in the iptables PREROUTING chain), iptables marks the connection with the incoming interface id. Then the packet reaches the LAN or DMZ and a return packet is generated and sent by the receiving host. Once this return packet hits the router, before it is actually routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the return packet will pass through a routing table directing it to the connection specific outgoing interface.
 
-
-When there is a new incoming connection, the connection is marked with the incoming interface using iptables, so that all subsequent return packets (sent from out LAN/DMZ to WAN) will be sent through the same uplink.
-
-This is obtained by having a default multipath routing table for new outgoing connections and a specific routing table for each uplink for already established outgoing connections and for incoming ones.
-
-## Uplink monitor algorithm
+## The uplink monitor algorithm
 
 The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful (see configuration options) the uplink is considered up, if not it's considered down. If a state change is detected from the previous check, the default multipath routing table (used for outgoing connections) is changed accordingly and the administrator is notified by email.
 
@@ -147,18 +143,18 @@ Documentation is included in the output, here is a dump using the standard examp
 
 #Mark packets with the outgoing interface:
 #
-#- established outbound connections: mark non-first packets (first packet will
+#- Established outbound connections: mark non-first packets (first packet will
 #  be marked as 0, as a standard unmerked packet, because the connection has not
 #  yet been marked with CONNMARK --set-mark)
 #
-#- new outbound connections: mark first packet, only effective if marking has
+#- New outbound connections: mark first packet, only effective if marking has
 #  been done in the section above
 #
-#- established inbound connections: mark returning packets (from LAN/DMZ to WAN)
+#- Inbound connections: mark returning packets (from LAN/DMZ to WAN)
 
 [0:0] -A PREROUTING -i eth0 -j CONNMARK --restore-mark
 
-#New inbound connections: mark with the incoming interface.
+#New inbound connections: mark the connection with the incoming interface.
 
 #Example Provider 1
 [0:0] -A PREROUTING -i eth1 -m state --state NEW -j CONNMARK --set-mark 1
@@ -167,8 +163,8 @@ Documentation is included in the output, here is a dump using the standard examp
 #Example Provider 3
 [0:0] -A PREROUTING -i eth3 -m state --state NEW -j CONNMARK --set-mark 3
 
-#New outbound connections: mark with the outgoing interface (chosen by the
-#multipath routing).
+#New outbound connections: mark the connection with the outgoing interface
+#(chosen by the multipath routing).
 
 #Example Provider 1
 [0:0] -A POSTROUTING -o eth1 -m state --state NEW -j CONNMARK --set-mark 1

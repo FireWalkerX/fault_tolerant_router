@@ -30,21 +30,21 @@ END
 
 #Mark packets with the outgoing interface:
 #
-#- established outbound connections: mark non-first packets (first packet will
+#- Established outbound connections: mark non-first packets (first packet will
 #  be marked as 0, as a standard unmerked packet, because the connection has not
 #  yet been marked with CONNMARK --set-mark)
 #
-#- new outbound connections: mark first packet, only effective if marking has
+#- New outbound connections: mark first packet, only effective if marking has
 #  been done in the section above
 #
-#- established inbound connections: mark returning packets (from LAN/DMZ to WAN)
+#- Inbound connections: mark returning packets (from LAN/DMZ to WAN)
 
 [0:0] -A PREROUTING -i #{LAN_INTERFACE} -j CONNMARK --restore-mark
 END
   puts "[0:0] -A PREROUTING -i #{DMZ_INTERFACE} -j CONNMARK --restore-mark" if DMZ_INTERFACE
   puts <<END
 
-#New inbound connections: mark with the incoming interface.
+#New inbound connections: mark the connection with the incoming interface.
 
 END
   UPLINKS.each_with_index do |uplink, i|
@@ -53,8 +53,8 @@ END
   end
   puts <<END
 
-#New outbound connections: mark with the outgoing interface (chosen by the
-#multipath routing).
+#New outbound connections: mark the connection with the outgoing interface
+#(chosen by the multipath routing).
 
 END
   UPLINKS.each_with_index do |uplink, i|
