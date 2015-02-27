@@ -267,5 +267,5 @@ GNU General Public License v2.0, see LICENSE file
 
 ## Author
 Alessandro Zarrilli
-Poggibonsi - Italy
+Poggibonsi - Italy  
 alessandro@zarrilli.net
