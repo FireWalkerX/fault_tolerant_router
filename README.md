@@ -1,21 +1,10 @@
 # Fault Tolerant Router
 
-Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. Outgoing connections are spread through the uplinks in a load balancing fashion using Linux multipath routing. The daemon monitors the state of the uplinks by routinely pinging well known IP addresses (Google public DNS servers, etc.) through each outgoing interface: once an uplink goes down, it is excluded from the multipath routing, when it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
+Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. LAN/DMZ internet traffic (outgoing connections) is load balanced between the uplinks using Linux multipath routing. The daemon monitors the state of the uplinks by routinely pinging well known IP addresses (Google public DNS servers, etc.) through each outgoing interface: once an uplink goes down, it is excluded from the multipath routing, when it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
 
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
-
-
-
-
-
-
-
-
-
-
-
-## Multipath routing, iptables and ip policy routing interaction
+## Interaction between multipath routing, iptables and ip policy routing
 The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing and incoming connections have a different behaviour:
 * Outgoing connections (from LAN/DMZ to WAN):
   * New connections:
@@ -26,27 +15,17 @@ The system is based on the interaction between Linux multipath routing, iptables
 * Incoming connections (from WAN to LAN/DMZ):
     The incoming interface is obviously decided by the connecting host, connecting to one of the IP addresses assigned to our uplink interfaces. Just after the packet enters the router (in the iptables PREROUTING chain), iptables marks the connection with the incoming interface id. Then the packet reaches the LAN or DMZ and a return packet is generated and sent by the receiving host. Once this return packet hits the router, before it is actually routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the return packet will pass through a routing table directing it to the connection specific outgoing interface.
 
-## The uplink monitor algorithm
+## The uplink monitor daemon
 
-The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful (see configuration options) the uplink is considered up, if not it's considered down. If a state change is detected from the previous check, the default multipath routing table (used for outgoing connections) is changed accordingly and the administrator is notified by email.
+The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful the uplink is considered up, if not it's considered down. If an uplink state change is detected, the default multipath routing table (used for LAN/DMZ to WAN connections) is changed accordingly and the administrator is notified by email.
 
-NB: if no uplink seems to be functional, all of them are added to the default multipath routing table
-NB: it's important not to be very strict because it could happen that some ping packets get randomly lost along the way, ore some IPs may be down
-NB: it's important to ping ip addresses far away because it happened to me personally that a provider had some routing temporary problems.
+The IP addresses to ping and the number of required successful pings is configurable. In order not to get false positives or negatives here are some things to consider:
+* Some ping packets can randomly get lost along the way, don't require 100% of the pings to be successful!
+* Some hosts you are pinging (**tests/ips** configuration parameter) may be temporarily down.
+* It's better not to ping too near hosts (for example your provider routers), because your provider could be temporarily disconnected from the rest of the internet (it happened...), so your uplink would result as up while it's actually unusable.
+* Sometimes an uplink can be not completely up or completely down, it's just "disturbed" and looses a lot of packets, being almost unusable: it's better to consider such uplink as "down", so don't require too few successful pings, otherwise it may be considered "up", because a few pings may pass through a "disturbed" link.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+If no uplink is up, all of them are added to the default multipath routing table, to get some bandwidth as soon as one comes back up.
 
 ## Requirements
 * [Ruby](https://www.ruby-lang.org)
@@ -257,15 +236,13 @@ COMMIT
 ```
 
 ## To do
-- Improve documentation: please let me know where it's not clear.
-- Test using VLAN interfaces: Fault Tolerant Router has always been used with physical interfaces, each uplink on it's own physical interface.
-- Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html): this way we could connect all of the uplinks to a single Linux physical interface through a switch, without using VLANs.
-- i18n
+* Test using VLAN interfaces: Fault Tolerant Router has always been used with physical interfaces, each uplink on it's own physical interface.
+* Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html): this way we could connect all of the uplinks to a single Linux physical interface through a switch, without using VLANs.
+* i18n
+* If no uplinks are up, set tests/interval configuration option to 0, to get bandwidth as soon as an uplink comes back up
 
 ## License
 GNU General Public License v2.0, see LICENSE file
 
 ## Author
-Alessandro Zarrilli
-Poggibonsi - Italy  
-alessandro@zarrilli.net
+Alessandro Zarrilli - alessandro@zarrilli.net
