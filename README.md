@@ -111,8 +111,8 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
 ## Iptables rules
 Iptables rules are generated with the command:  
 `$ fault_tolerant_router generate_iptables`  
-The rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
-Documentation is included in the output, here is a dump using the standard example configuration:
+Rules are in [iptables-save](http://manned.org/iptables-save.8) format, you should integrate them with your existing ones.
+Documentation is included as comments in the output, here is a dump using the standard example configuration:
 ```
 #Integrate with your existing "iptables-save" configuration, or adapt to work
 #with any other iptables configuration system
@@ -266,4 +266,6 @@ COMMIT
 GNU General Public License v2.0, see LICENSE file
 
 ## Author
-Alessandro Zarrilli - <alessandro@zarrilli.net>
+Alessandro Zarrilli
+Poggibonsi - Italy
+alessandro@zarrilli.net
