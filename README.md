@@ -1,22 +1,23 @@
 # Fault Tolerant Router
 
-Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. LAN/DMZ internet traffic (outgoing connections) is load balanced between the uplinks using Linux multipath routing. The daemon monitors the state of the uplinks by routinely pinging well known IP addresses (Google public DNS servers, etc.) through each outgoing interface: once an uplink goes down, it is excluded from the multipath routing, when it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
+Fault Tolerant Router is a daemon, running in background on a Linux router or firewall, monitoring the state of multiple internet uplinks/providers and changing the routing accordingly. LAN/DMZ internet traffic (outgoing connections) is load balanced between the uplinks using Linux *multipath routing*. The daemon monitors the state of the uplinks by routinely pinging well known IP addresses (Google public DNS servers, etc.) through each outgoing interface: once an uplink goes down, it is excluded from the *multipath routing*, when it comes back up, it is included again. All of the routing changes are notified to the administrator by email.
 
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
-## Interaction between multipath routing, iptables and ip policy routing
-The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing (from LAN/DMZ to WAN) and incoming (from WAN to LAN/DMZ) connections have a different behaviour:
+## Interaction between *multipath routing*, *iptables* and *ip policy routing*
+The system is based on the interaction between Linux *multipath routing*, *iptables* and *ip policy routing*. Outgoing (from LAN/DMZ to WAN) and incoming (from WAN to LAN/DMZ) connections have a different behaviour:
 * **Outgoing connections (from LAN/DMZ to WAN)**:
   * **New connections**:  
-The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptables POSTROUTING chain), iptables marks the connection with the outgoing interface id, so that all subsequent connection packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
+The outgoing interface (uplink) is decided by the Linux *multipath routing*, in a round-robin fashion. Then, just before the packet leaves the router (in the iptables POSTROUTING chain), iptables marks the connection with the outgoing interface id, so that all subsequent connection packets will be sent through the same interface.  
+NB: all the packets of the same connection should be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
   * **Established connections**:  
-Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the packet will pass through a routing table directing it to the connection specific outgoing interface.
+Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to *ip policy routing*, the packet will pass through a routing table directing it to the connection specific outgoing interface.
 * **Incoming connections (from WAN to LAN/DMZ)**:  
-The incoming interface is obviously decided by the connecting host, connecting to one of the IP addresses assigned to our uplink interfaces. Just after the packet enters the router (in the iptables PREROUTING chain), iptables marks the connection with the incoming interface id. Then the packet reaches the LAN or DMZ and a return packet is generated and sent by the receiving host. Once this return packet hits the router, before it is actually routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the return packet will pass through a routing table directing it to the connection specific outgoing interface.
+The incoming interface is obviously decided by the connecting host, connecting to one of the IP addresses assigned to our uplink interfaces. Just after the packet enters the router (in the iptables PREROUTING chain), iptables marks the connection with the incoming interface id. Then the packet reaches the LAN or DMZ and a return packet is generated and sent by the receiving host. Once this return packet hits the router, before it is actually routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to *ip policy routing*, the return packet will pass through a routing table directing it to the connection specific outgoing interface.
 
 ## The uplink monitor daemon
 
-The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful the uplink is considered up, if not it's considered down. If an uplink state change is detected, the default multipath routing table (used for LAN/DMZ to WAN connections) is changed accordingly and the administrator is notified by email.
+The daemon monitors the state of the uplinks by pinging well known IP addresses through each uplink: if enough pings are successful the uplink is considered up, if not it's considered down. If an uplink state change is detected, the default *multipath routing* table (used for LAN/DMZ to WAN connections) is changed accordingly and the administrator is notified by email.
 
 The IP addresses to ping and the number of required successful pings is configurable. In order not to get false positives or negatives here are some things to consider:
 * Some ping packets can randomly get lost along the way, don't require 100% of the pings to be successful!
@@ -24,7 +25,7 @@ The IP addresses to ping and the number of required successful pings is configur
 * It's better not to ping too near hosts (for example your provider routers), because your provider could be temporarily disconnected from the rest of the internet (it happened...), so your uplink would result as up while it's actually unusable.
 * Sometimes an uplink can be not completely up or completely down, it's just "disturbed" and looses a lot of packets, being almost unusable: it's better to consider such uplink as "down", so don't require too few successful pings, otherwise it may be considered "up", because a few pings may pass through a "disturbed" link.
 
-If no uplink is up, all of them are added to the default multipath routing table, to get some bandwidth as soon as one comes back up.
+If no uplink is up, all of them are added to the default *multipath routing* table, to get some bandwidth as soon as one comes back up.
 
 ## Requirements
 * [Ruby](https://www.ruby-lang.org)
@@ -61,7 +62,7 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
   * **gateway**: the gateway on this interface, usually the provider's router IP address.
   * **description**: used in the alert emails.
   * **weight**: optional parameter, it's the preference to assign to the uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
-  * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the multipath routing, i.e. the uplink will never be used when choosing one for a new outgoing connection. Exception to this is if some kind of outgoing connection is forced to pass through this uplink, see [iptables](#Iptables-rules) section. Even if set to *false*, incoming connections are still possible. Use cases to set it to *false*:
+  * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the *multipath routing*, i.e. the uplink will never be used when choosing one for a new outgoing connection. Exception to this is if some kind of outgoing connection is forced to pass through this uplink, see [iptables](#Iptables-rules) section. Even if set to *false*, incoming connections are still possible. Use cases to set it to *false*:
     * Want to reserve an uplink for incoming connections only, excluding it from outgoing LAN internet traffic. Tipically you may want this because you have a mail server, web server, etc. listening on this uplink.
     * Temporarily force all of the outgoing LAN internet traffic to pass through the other uplinks, to stress test the other uplinks and determine their bandwidth
     * Temporarily exclude the uplink to do some reconfiguration, for example changing one of the internet providers.
