@@ -5,10 +5,10 @@ Fault Tolerant Router is a daemon, running in background on a Linux router or fi
 Fault Tolerant Router is well tested and has been used in production for several years, in several sites.
 
 ## Interaction between multipath routing, iptables and ip policy routing
-The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing and incoming connections have a different behaviour:
+The system is based on the interaction between Linux multipath routing, iptables and ip policy routing. Outgoing (from LAN/DMZ to WAN) and incoming (from WAN to LAN/DMZ) connections have a different behaviour:
 * **Outgoing connections (from LAN/DMZ to WAN)**:
   * **New connections**:  
-The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptables POSTROUTING chain), iptables marks the connection with the outgoing interface id, so that all the connection subsequent packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
+The outgoing interface (uplink) is decided by the Linux multipath routing, in a round-robin fashion. Then, just before the packet leaves the router (in the iptables POSTROUTING chain), iptables marks the connection with the outgoing interface id, so that all subsequent connection packets will be sent through the same interface. NB: all of the packets of the same connection must be originating from the same IP address, otherwise the server you are connecting to would refuse them (unless you are using specific protocols).
   * **Established connections**:  
 Before the packet is routed (in the iptables PREROUTING chain), iptables marks it with the outgoing interface id that was previously assigned to the connection. This way, thanks to ip policy routing, the packet will pass through a routing table directing it to the connection specific outgoing interface.
 * **Incoming connections (from WAN to LAN/DMZ)**:  
