@@ -4,6 +4,26 @@
 [![Dependency Status](https://gemnasium.com/drsound/fault_tolerant_router.svg)](https://gemnasium.com/drsound/fault_tolerant_router)
 [![Code Climate](https://codeclimate.com/github/drsound/fault_tolerant_router/badges/gpa.svg)](https://codeclimate.com/github/drsound/fault_tolerant_router)
 
+### Examples
+
+[![Gratipay donate button](https://img.shields.io/gratipay/bevry.svg)](https://www.gratipay.com/bevry/ "Donate weekly to this project using Gratipay")
+
+[![Flattr donate button](https://img.shields.io/badge/flattr-donate-yellow.svg)](http://flattr.com/thing/344188/balupton-on-Flattr "Donate monthly to this project using Flattr")
+
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QB8GQPZAH84N6 "Donate once-off to this project using Paypal")
+
+[![BitCoin donate button](https://img.shields.io/badge/bitcoin-donate-yellow.svg)](https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a "Donate once-off to this project using BitCoin")
+
+[![Wishlist browse button](https://img.shields.io/badge/wishlist-donate-yellow.svg)](http://amzn.com/w/2F8TXKSNAFG4V "Buy an item on our wishlist for us")
+
+https://www.patreon.com/
+
+### Ok
+
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=96LFVQRFGRPFW&lc=GB&item_name=Alessandro%20Zarrilli&item_number=fault_tolerant_router&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
+
+
+
 ## In brief
 
 Do you have multiple internet connections (uplinks) with several providers? Do you want to transparently use all of the available bandwidth? Do you want to remain online even if some of the uplinks go down? This tool may help you!
