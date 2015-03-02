@@ -101,7 +101,7 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
   * **recipients**: An array of email recipients
   * **smtp_parameters**: See http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
 * **base_table**: Base IP route table number, just need to change if you are already using [multiple routing tables](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping.
-* **base_priority**: Just need to change if you are already using [ip policy routing](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping. Must be higher than 32767 (default priority, see output of `ip rule` command).
+* **base_priority**: Just need to change if you are already using [ip policy routing](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping. Must be higher than 32767 (default priority, see `ip rule` command output).
 * **base_fwmark**: Just need to change if you are already using packet marking, to avoid overlapping.
 
 ## *Iptables* rules
