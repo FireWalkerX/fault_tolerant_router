@@ -73,13 +73,13 @@ If you want a quick and dirty way to run the program in background, just add an 
 ## Configuration file
 
 The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikipedia.org/wiki/YAML) format. Here is the explanation of the options:
-* **uplinks**: array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
-  * **interface**: the network interface where the uplink is connected. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried it with VLAN interfaces (it's in the to do list).
-  * **ip**: primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify here the primary one that will be used as standard SNAT source.
-  * **gateway**: the uplink gateway, usually the provider's router IP address.
-  * **description**: uplink name, used in notifications.
-  * **weight**: optional parameter, it's the preference to assign to this uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
-  * **default_route**: optional parameter, default value is *true*. If set to *false* the uplink is excluded from the *multipath routing*, i.e. the uplink will never be selected when choosing one for a new outgoing connection. There's an exception to this if some kind of outgoing connection is forced to pass through this uplink, see [Iptables rules](#iptables-rules) section. Note this parameter only affects outgoing connections, even if set to *false* incoming connections are still possible. Use cases to set it to *false*:
+* **uplinks**: Array of uplinks. The example configuration has 3 uplinks, but you can have from 2 to as many as you wish.
+  * **interface**: The network interface where the uplink is connected. Until today Fault Tolerant Router has always been used with each uplink on it's own physical interface, never tried it with VLAN interfaces (it's in the to do list).
+  * **ip**: Primary IP address of the network interface. You can have more than one IP address assigned to the interface, just specify here the primary one that will be used as standard SNAT source.
+  * **gateway**: The uplink gateway, usually the provider's router IP address.
+  * **description**: Uplink name, used in notifications.
+  * **weight**: Optional parameter, it's the preference to assign to this uplink when choosing one for a new outgoing connection. Use when you have uplinks with different bandwidths. See http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH05.web.html
+  * **default_route**: Optional parameter, default value is *true*. If set to *false* the uplink is excluded from the *multipath routing*, i.e. the uplink will never be selected when choosing one for a new outgoing connection. There's an exception to this if some kind of outgoing connection is forced to pass through this uplink, see [Iptables rules](#iptables-rules) section. Note this parameter only affects outgoing connections, even if set to *false* incoming connections are still possible. Use cases to set it to *false*:
     * Want to reserve an uplink for incoming connections only, excluding it from outgoing LAN internet traffic. Tipically you may want this because you have a mail server, web server, VPN server, etc. listening on an uplink.
     * Temporarily force all of the outgoing LAN internet traffic to pass through the other uplinks, to stress test them and determine their bandwidth.
     * Temporarily exclude an uplink to reconfigure it, for example because of and internet provider change.
@@ -87,22 +87,22 @@ The fault_tolerant_router.conf configuration file is in [YAML](http://en.wikiped
   * **lan**: LAN interface
   * **dmz**: DMZ interface, leave blank if you have no DMZ
 * **tests**
-  * **ips**: an array of IP addresses to ping to verify the uplinks state. You can add as many as you wish. Predefined ones are Google DNS, OpenDNS DNS, other public DNS. Every time an uplink is tested the IP addresses are shuffled, so listing order is not important.
-  * **required_successful**: number of successfully pinged IP addresses to consider an uplink to be functional
-  * **ping_retries**: number of ping retries before giving up on an IP
-  * **interval**: seconds between a check of the uplinks and the next one
+  * **ips**: An array of IP addresses to ping to verify the uplinks state. You can add as many as you wish. Predefined ones are Google DNS, OpenDNS DNS, other public DNS. Every time an uplink is tested the IP addresses are shuffled, so listing order is not important.
+  * **required_successful**: Number of successfully pinged IP addresses to consider an uplink to be functional
+  * **ping_retries**: Number of ping retries before giving up on an IP
+  * **interval**: Seconds between a check of the uplinks and the next one
 * **log**
-  * **file**: log file path
-  * **max_size**: maximum log file size (in bytes). Once reached this size, the log file will be rotated.
-  * **old_files**: number of old rotated files to keep
+  * **file**: Log file path
+  * **max_size**: Maximum log file size (in bytes). Once reached this size, the log file will be rotated.
+  * **old_files**: Number of old rotated files to keep
 * **email**
-  * **send**: set to *true* or *false* to enable or disable email notification
-  * **sender**: email sender
+  * **send**: Set to *true* or *false* to enable or disable email notification
+  * **sender**: Email sender
   * **recipients**: an array of email recipients
-  * **smtp_parameters**: see http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
-* **base_table**: just need to change if you are already using [multiple routing tables](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
-* **base_priority**: just need to change if you are already using [ip rule](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
-* **base_fwmark**: just need to change if you are already using packet marking, to avoid overlapping
+  * **smtp_parameters**: See http://ruby-doc.org/stdlib-2.2.0/libdoc/net/smtp/rdoc/Net/SMTP.html
+* **base_table**: Just need to change if you are already using [multiple routing tables](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
+* **base_priority**: Just need to change if you are already using [ip rule](http://lartc.org/howto/lartc.rpdb.html), to avoid overlapping
+* **base_fwmark**: Just need to change if you are already using packet marking, to avoid overlapping
 
 ## *Iptables* rules
 
