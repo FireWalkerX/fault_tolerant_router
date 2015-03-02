@@ -11,7 +11,7 @@
 
 ## In brief
 
-Do you have multiple internet connections (uplinks) with several providers? Do you want to transparently use all of the available bandwidth? Do you want to remain online even if some of the uplinks go down? This tool may help you!
+Do you have multiple internet connections (uplinks) with several providers? Do you want to transparently use all of the available bandwidth? Do you want to remain online even if some of the uplinks goes down? This tool may help you!
 
 ## A more formal description
 
