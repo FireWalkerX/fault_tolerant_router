@@ -23,7 +23,6 @@ pledgie
 ### Ok
 
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=96LFVQRFGRPFW&lc=GB&item_name=Alessandro%20Zarrilli&item_number=fault_tolerant_router&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Donate once-off to this project using Paypal")
-
 [![Gratipay donate button](https://img.shields.io/gratipay/AlessandroZarrilli.svg)](https://www.gratipay.com/AlessandroZarrilli/ "Donate weekly to this project using Gratipay")
 
 
