@@ -6,7 +6,7 @@
 
 ### Examples to do
 
-[![BitCoin donate button](https://img.shields.io/badge/bitcoin-donate-yellow.svg)](https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a "Donate once-off to this project using BitCoin")
+
 
 https://www.patreon.com/
 
@@ -24,7 +24,7 @@ https://www.patreon.com/
 [![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=96LFVQRFGRPFW&lc=GB&item_name=Alessandro%20Zarrilli&item_number=fault_tolerant_router&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Donate once-off to this project using Paypal")
 [![Gratipay donate button](https://img.shields.io/gratipay/AlessandroZarrilli.svg)](https://www.gratipay.com/AlessandroZarrilli/ "Donate weekly to this project using Gratipay")
 [![Flattr donate button](https://img.shields.io/badge/flattr-donate-yellow.svg)](https://flattr.com/submit/auto?user_id=alessandro.zarrilli&url=https%3A%2F%2Fgithub.com%2Fdrsound%2Ffault_tolerant_router&title=Fault%20Tolerant%20Router&tags=github&category=software "Donate monthly to this project using Flattr")
-
+[![BitCoin donate button](https://img.shields.io/badge/bitcoin-donate-yellow.svg)](https://www.coinbase.com/checkouts/c7e9ea74ce43357eeabb0db81e93f303 "Donate once-off to this project using BitCoin")
 
 
 ## In brief
