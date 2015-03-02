@@ -10,7 +10,6 @@
 
 https://www.patreon.com/
 
-pledgie
 
 ### Examples done
 
