@@ -59,6 +59,8 @@ If no uplink is up, all of them are added to the default *multipath routing* tab
 
 ## Usage
 
+Fault Tolerant Router should be run **as root**, or as an high privileges user, able to modify routing, etc.
+
 1. Configure your router interfaces as usual, with every uplink connected to it's own physical interface. An interface may have more than one IP address if needed (from the same uplink of course). **Don't** set any default route.
 2. Save an example configuration file in /etc/fault_tolerant_router.conf (use the `--config` option to set another location):  
 `$ fault_tolerant_router generate_config`
