@@ -266,6 +266,7 @@ COMMIT
 * i18n
 * If no uplinks are up, set tests/interval configuration option to 0, to get bandwidth as soon as an uplink comes back up
 * A web service interface to query the status of the uplinks
+* Triggers (launching external scripts) when an uplink goes up or down
 
 ## License
 GNU General Public License v2.0, see LICENSE file
