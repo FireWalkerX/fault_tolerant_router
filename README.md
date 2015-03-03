@@ -263,6 +263,7 @@ COMMIT
 * Implement routing through [realms](http://www.policyrouting.org/PolicyRoutingBook/ONLINE/CH07.web.html): this way we could connect all of the uplinks to a single Linux physical interface through a switch, without using VLANs.
 * i18n
 * If no uplinks are up, set tests/interval configuration option to 0, to get bandwidth as soon as an uplink comes back up
+* A web service interface to query the status of the uplinks
 
 ## License
 GNU General Public License v2.0, see LICENSE file
